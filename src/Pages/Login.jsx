@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import axios from "axios";
 import "./Styles.css";
@@ -27,13 +27,16 @@ export default function Login() {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/user/login",
+        "http://localhost:5000/user/login",
         inputValue
       );
+
       if (response.status === 200) {
-        if (response.data.role === "User") {
+        if (response.data.result.validateUser.role === "User") {
+          sessionStorage.setItem("userToken", response.data.result.token);
           navigate("/user");
-        } else {
+        } else if (response.data.result.validateUser.role === "Admin") {
+          sessionStorage.setItem("adminToken", response.data.result.token);
           navigate("/admin");
         }
       }
@@ -41,6 +44,19 @@ export default function Login() {
       console.log("Catch Block Error:", error);
     }
   };
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("userToken");
+    const token1 = sessionStorage.getItem("adminToken");
+
+    if (token) {
+      navigate("/user");
+    } else if (token1) {
+      navigate("/admin");
+    } else {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <section>

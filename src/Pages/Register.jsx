@@ -28,11 +28,11 @@ export default function Register() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:4000/user/register",
+        "http://localhost:5000/user/register",
         inputValue
       );
       if (response.status === 200) {
-        navigate("/login");
+        navigate("/");
       }
     } catch (error) {
       console.log(error);
